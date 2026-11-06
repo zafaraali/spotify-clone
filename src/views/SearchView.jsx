@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Typography, Button } from '@mui/material';
 import TrackRow from '../components/TrackRow';
 
 export default function SearchView({
@@ -29,26 +30,21 @@ export default function SearchView({
   });
 
   return (
-    <div className="space-y-6">
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       {searchQuery || selectedCategory ? (
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">
-              {searchQuery
-                ? `Results for "${searchQuery}"`
-                : `${selectedCategory.name} Tracks`}
-            </h2>
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2.5 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.2rem' }}>
+              {searchQuery ? `Results for "${searchQuery}"` : `${selectedCategory.name} Tracks`}
+            </Typography>
             {selectedCategory && (
-              <button
-                onClick={() => setSelectedCategory(null)}
-                className="text-xs text-zinc-400 hover:text-white underline"
-              >
+              <Button onClick={() => setSelectedCategory(null)} size="small" sx={{ color: '#a1a1aa', fontSize: '0.8rem', textTransform: 'none', '&:hover': { color: 'white' } }}>
                 Clear Filter
-              </button>
+              </Button>
             )}
-          </div>
+          </Box>
           {filteredSongs.length > 0 ? (
-            <div className="space-y-1">
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
               {filteredSongs.map((track, i) => (
                 <TrackRow
                   key={track.id}
@@ -62,27 +58,44 @@ export default function SearchView({
                   formatTime={formatTime}
                 />
               ))}
-            </div>
+            </Box>
           ) : (
-            <p className="text-zinc-400">No tracks found matching your selection.</p>
+            <Typography variant="body2" sx={{ color: '#a1a1aa', fontSize: '0.875rem' }}>
+              No tracks found matching your selection.
+            </Typography>
           )}
-        </section>
+        </Box>
       ) : (
-        <section>
-          <h2 className="text-xl font-bold mb-4">Browse All</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <Box>
+          <Typography variant="h6" sx={{ fontWeight: 700, mb: 2.5, fontSize: '1.2rem' }}>
+            Browse All
+          </Typography>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)' }, gap: 2.5 }}>
             {categories.map((cat) => (
-              <div
+              <Box
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat)}
-                className={`${cat.color} h-32 md:h-36 rounded-lg p-4 relative overflow-hidden font-bold text-base md:text-lg cursor-pointer hover:scale-[1.02] transition shadow-lg`}
+                sx={{
+                  bgcolor: cat.color,
+                  height: 130,
+                  borderRadius: 2,
+                  p: 3,
+                  position: 'relative',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  boxShadow: 3,
+                  '&:hover': { transform: 'scale(1.02)' },
+                  transition: 'transform 0.2s'
+                }}
               >
-                <span>{cat.name}</span>
-              </div>
+                <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.1rem', color: 'white' }}>
+                  {cat.name}
+                </Typography>
+              </Box>
             ))}
-          </div>
-        </section>
+          </Box>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }

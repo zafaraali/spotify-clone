@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Typography } from '@mui/material';
 import TrackRow from '../components/TrackRow';
 
 export default function LibraryView({
@@ -12,10 +13,12 @@ export default function LibraryView({
   title = "Your Library"
 }) {
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold mb-4">{title}</h2>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <Typography variant="h5" sx={{ fontWeight: 700, fontSize: '1.35rem' }}>
+        {title}
+      </Typography>
       {songs.length > 0 ? (
-        <div className="space-y-1">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           {songs.map((track, i) => (
             <TrackRow
               key={track.id}
@@ -29,10 +32,12 @@ export default function LibraryView({
               formatTime={formatTime}
             />
           ))}
-        </div>
+        </Box>
       ) : (
-        <p className="text-zinc-400">No songs to display.</p>
+        <Typography variant="body2" sx={{ color: '#a1a1aa', fontSize: '0.875rem' }}>
+          No songs to display.
+        </Typography>
       )}
-    </div>
+    </Box>
   );
 }

@@ -1,4 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Box, Modal, Typography, Button, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Player from './components/Player';
@@ -7,7 +11,6 @@ import HomeView from './views/HomeView';
 import SearchView from './views/SearchView';
 import LibraryView from './views/LibraryView';
 import { SAMPLE_SONGS, CATEGORIES } from './data/mockData';
-import { ChevronDown, Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Heart, X, Check, ShieldCheck } from 'lucide-react';
 
 export default function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -125,16 +128,14 @@ export default function App() {
     setIsPlaying(true);
   };
 
-  const handleSeek = (e) => {
-    const time = parseFloat(e.target.value);
-    setCurrentTime(time);
-    audioRef.current.currentTime = time;
+  const handleSeek = (e, newValue) => {
+    setCurrentTime(newValue);
+    audioRef.current.currentTime = newValue;
   };
 
-  const handleVolumeChange = (e) => {
-    const val = parseFloat(e.target.value);
-    setVolume(val);
-    if (val > 0) setIsMuted(false);
+  const handleVolumeChange = (e, newValue) => {
+    setVolume(newValue);
+    if (newValue > 0) setIsMuted(false);
   };
 
   const toggleMute = () => setIsMuted(!isMuted);
@@ -158,15 +159,15 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen bg-black text-white flex flex-col overflow-hidden font-sans">
-      <div className="flex-1 flex overflow-hidden">
+    <Box sx={{ height: '100vh', bgcolor: 'black', color: 'white', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         <Sidebar
           currentView={currentView}
           setCurrentView={handleSetCurrentView}
           likedSongsCount={likedSongIds.size}
         />
 
-        <main className="flex-1 bg-gradient-to-b from-zinc-800/80 to-zinc-950 flex flex-col overflow-y-auto">
+        <Box component="main" sx={{ flex: 1, background: 'linear-gradient(180deg, rgba(39,39,42,0.8) 0%, rgba(9,9,11,1) 100%)', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
           <Header
             currentView={currentView}
             searchQuery={searchQuery}
@@ -179,7 +180,7 @@ export default function App() {
             setShowProfileModal={setShowProfileModal}
           />
 
-          <div className="p-4 md:p-8 flex-1 pb-24 md:pb-8">
+          <Box sx={{ p: { xs: 3, md: 5 }, flex: 1, pb: { xs: 12, md: 5 } }}>
             {currentView === 'home' && (
               <HomeView
                 songs={songs}
@@ -226,9 +227,9 @@ export default function App() {
                 formatTime={formatTime}
               />
             )}
-          </div>
-        </main>
-      </div>
+          </Box>
+        </Box>
+      </Box>
 
       <Player
         currentTrack={currentTrack}
@@ -256,86 +257,84 @@ export default function App() {
       <MobileNav currentView={currentView} setCurrentView={handleSetCurrentView} />
 
       {/* Premium Modal */}
-      {showPremiumModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 max-w-lg w-full relative">
-            <button
-              onClick={() => setShowPremiumModal(false)}
-              className="absolute top-4 right-4 text-zinc-400 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            <div className="text-center space-y-3">
-              <span className="inline-block bg-green-500/10 text-green-400 font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                SoundPulse Premium
-              </span>
-              <h3 className="text-2xl font-bold">Get 3 Months Free</h3>
-              <p className="text-sm text-zinc-400">Enjoy ad-free music, offline playback, and unlimited skips.</p>
-            </div>
-            <div className="mt-6 space-y-3">
-              {['Ad-free music listening', 'Download to listen offline', 'Play songs in any order', 'High quality audio'].map((feat, i) => (
-                <div key={i} className="flex items-center gap-3 text-sm text-zinc-300">
-                  <Check className="w-4 h-4 text-green-500 shrink-0" />
-                  <span>{feat}</span>
-                </div>
-              ))}
-            </div>
-            <button
-              onClick={() => setShowPremiumModal(false)}
-              className="w-full mt-6 bg-green-500 text-black font-bold py-3 rounded-full hover:scale-105 transition"
-            >
+      <Modal open={showPremiumModal} onClose={() => setShowPremiumModal(false)} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 3 }}>
+        <Box sx={{ bgcolor: '#18181b', border: '1px solid #27272a', borderRadius: 4, p: 4, maxWidth: 500, width: '100%', position: 'relative', outline: 'none' }}>
+          <IconButton onClick={() => setShowPremiumModal(false)} sx={{ position: 'absolute', top: 16, right: 16, color: '#a1a1aa' }}>
+            <CloseIcon />
+          </IconButton>
+          <Box sx={{ textAlign: 'center', mb: 3 }}>
+            <Typography variant="caption" sx={{ bgcolor: 'rgba(29, 185, 84, 0.1)', color: '#4ade80', fontWeight: 700, px: 2, py: 0.5, borderRadius: '9999px', textTransform: 'uppercase' }}>
+              SoundPulse Premium
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 700, mt: 2 }}>
               Get 3 Months Free
-            </button>
-          </div>
-        </div>
-      )}
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#a1a1aa', mt: 1 }}>
+              Enjoy ad-free music, offline playback, and unlimited skips.
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, my: 3 }}>
+            {['Ad-free music listening', 'Download to listen offline', 'Play songs in any order', 'High quality audio'].map((feat, i) => (
+              <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <CheckIcon sx={{ color: '#1DB954', fontSize: 20 }} />
+                <Typography variant="body2" sx={{ color: '#d4d4d8' }}>{feat}</Typography>
+              </Box>
+            ))}
+          </Box>
+          <Button
+            onClick={() => setShowPremiumModal(false)}
+            variant="contained"
+            fullWidth
+            sx={{ bgcolor: '#1DB954', color: 'black', fontWeight: 700, py: 1.5, borderRadius: '9999px', '&:hover': { bgcolor: '#1ed760' } }}
+          >
+            Get 3 Months Free
+          </Button>
+        </Box>
+      </Modal>
 
       {/* Profile Modal */}
-      {showProfileModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 max-w-md w-full relative">
-            <button
-              onClick={() => setShowProfileModal(false)}
-              className="absolute top-4 right-4 text-zinc-400 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-green-500 to-emerald-300 text-black flex items-center justify-center font-bold text-2xl">
-                ZA
-              </div>
-              <div>
-                <h3 className="text-xl font-bold">Zafar Ali</h3>
-                <p className="text-xs text-zinc-400">zafar@example.com</p>
-                <div className="flex items-center gap-1 text-xs text-green-400 mt-1">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>Free Plan</span>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-2 border-t border-zinc-800 pt-4 text-sm text-zinc-300">
-              <div className="flex justify-between py-2 border-b border-zinc-800/50">
-                <span>Account Status</span>
-                <span className="text-white font-semibold">Active</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-zinc-800/50">
-                <span>Liked Songs</span>
-                <span className="text-white font-semibold">{likedSongIds.size}</span>
-              </div>
-              <div className="flex justify-between py-2">
-                <span>Audio Quality</span>
-                <span className="text-white font-semibold">High (320kbps)</span>
-              </div>
-            </div>
-            <button
-              onClick={() => setShowProfileModal(false)}
-              className="w-full mt-6 bg-zinc-800 text-white font-semibold py-2.5 rounded-full hover:bg-zinc-700 transition"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+      <Modal open={showProfileModal} onClose={() => setShowProfileModal(false)} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 3 }}>
+        <Box sx={{ bgcolor: '#18181b', border: '1px solid #27272a', borderRadius: 4, p: 4, maxWidth: 400, width: '100%', position: 'relative', outline: 'none' }}>
+          <IconButton onClick={() => setShowProfileModal(false)} sx={{ position: 'absolute', top: 16, right: 16, color: '#a1a1aa' }}>
+            <CloseIcon />
+          </IconButton>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 4 }}>
+            <Box sx={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg, #1DB954 0%, #34d399 100%)', color: 'black', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.5rem' }}>
+              ZA
+            </Box>
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>Zafar Ali</Typography>
+              <Typography variant="caption" sx={{ color: '#a1a1aa' }}>zafar@example.com</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#4ade80', mt: 0.5 }}>
+                <VerifiedUserIcon sx={{ fontSize: 14 }} />
+                <Typography variant="caption">Free Plan</Typography>
+              </Box>
+            </Box>
+          </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, borderTop: '1px solid #27272a', pt: 3, mb: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography variant="body2" sx={{ color: '#a1a1aa' }}>Account Status</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>Active</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography variant="body2" sx={{ color: '#a1a1aa' }}>Liked Songs</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>{likedSongIds.size}</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography variant="body2" sx={{ color: '#a1a1aa' }}>Audio Quality</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>High (320kbps)</Typography>
+            </Box>
+          </Box>
+          <Button
+            onClick={() => setShowProfileModal(false)}
+            variant="contained"
+            fullWidth
+            sx={{ bgcolor: '#27272a', color: 'white', fontWeight: 600, py: 1.25, borderRadius: '9999px', '&:hover': { bgcolor: '#3f3f46' } }}
+          >
+            Close
+          </Button>
+        </Box>
+      </Modal>
+    </Box>
   );
 }

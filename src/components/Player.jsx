@@ -1,5 +1,15 @@
 import React from 'react';
-import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Volume2, VolumeX, Heart, Maximize2 } from 'lucide-react';
+import { Box, Typography, IconButton, Slider, Avatar } from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
+import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
+import SkipNextIcon from '@mui/icons-material/SkipNext';
+import ShuffleIcon from '@mui/icons-material/Shuffle';
+import RepeatIcon from '@mui/icons-material/Repeat';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
 
 export default function Player({
   currentTrack,
@@ -26,106 +36,153 @@ export default function Player({
   if (!currentTrack) return null;
 
   return (
-    <footer className="h-20 bg-zinc-950 border-t border-zinc-900 px-4 md:px-6 flex items-center justify-between text-white select-none z-20">
-      {/* Track Info */}
-      <div 
-        className="flex items-center gap-3 w-full md:w-1/4 min-w-0 md:min-w-[180px] cursor-pointer md:cursor-auto"
+    <Box
+      component="footer"
+      sx={{
+        height: 84,
+        bgcolor: '#09090b',
+        borderTop: '1px solid #18181b',
+        px: { xs: 2.5, md: 3.5 },
+        pt: 1.5,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        color: 'white',
+        userSelect: 'none',
+        zIndex: 20
+      }}
+    >
+      <Box
         onClick={() => setShowMobilePlayer && setShowMobilePlayer(true)}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          width: { xs: 'auto', md: '25%' },
+          minWidth: 0,
+          cursor: { xs: 'pointer', md: 'default' }
+        }}
       >
-        <img
+        <Avatar
           src={currentTrack.cover}
-          alt={currentTrack.title}
-          className="w-12 h-12 md:w-14 md:h-14 rounded shadow-md object-cover shrink-0"
+          variant="rounded"
+          sx={{ width: 50, height: 50, boxShadow: 2, borderRadius: 1 }}
         />
-        <div className="truncate">
-          <h4 className="text-sm font-semibold truncate hover:underline">{currentTrack.title}</h4>
-          <p className="text-xs text-zinc-400 truncate hover:underline">{currentTrack.artist}</p>
-        </div>
-        <button 
+        <Box sx={{ overflow: 'hidden' }}>
+          <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.875rem', truncate: 'true', '&:hover': { textDecoration: 'underline' } }}>
+            {currentTrack.title}
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#a1a1aa', fontSize: '0.75rem', truncate: 'true', display: 'block', '&:hover': { textDecoration: 'underline' } }}>
+            {currentTrack.artist}
+          </Typography>
+        </Box>
+        <IconButton
           onClick={(e) => {
             e.stopPropagation();
             toggleLike(currentTrack.id);
-          }} 
-          className="ml-2 text-zinc-400 hover:text-white transition shrink-0"
+          }}
+          size="small"
+          sx={{ color: isLiked(currentTrack.id) ? '#1DB954' : '#a1a1aa', ml: 0.5, '&:hover': { color: 'white' } }}
         >
-          <Heart className={`w-4 h-4 ${isLiked(currentTrack.id) ? 'fill-green-500 text-green-500' : ''}`} />
-        </button>
-      </div>
+          <FavoriteIcon fontSize="small" />
+        </IconButton>
+      </Box>
 
-      {/* Desktop Controls & Progress */}
-      <div className="hidden md:flex flex-col items-center gap-1.5 w-2/4 max-w-xl">
-        <div className="flex items-center gap-4">
-          <button
+      <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column', alignItems: 'center', gap: 0.75, width: '45%', maxWidth: 580 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+          <IconButton
             onClick={() => setIsShuffle(!isShuffle)}
-            className={`transition ${isShuffle ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}
+            sx={{ color: isShuffle ? '#1DB954' : '#a1a1aa', '&:hover': { color: 'white' } }}
+            size="small"
           >
-            <Shuffle className="w-4 h-4" />
-          </button>
-          <button onClick={playPrev} className="text-zinc-400 hover:text-white transition">
-            <SkipBack className="w-5 h-5 fill-current" />
-          </button>
-          <button
+            <ShuffleIcon fontSize="small" />
+          </IconButton>
+          <IconButton onClick={playPrev} sx={{ color: '#a1a1aa', '&:hover': { color: 'white' } }} size="small">
+            <SkipPreviousIcon fontSize="small" />
+          </IconButton>
+          <IconButton
             onClick={togglePlay}
-            className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 transition"
+            sx={{
+              bgcolor: 'white',
+              color: 'black',
+              width: 34,
+              height: 34,
+              '&:hover': { bgcolor: '#f4f4f5', transform: 'scale(1.05)' }
+            }}
           >
-            {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
-          </button>
-          <button onClick={playNext} className="text-zinc-400 hover:text-white transition">
-            <SkipForward className="w-5 h-5 fill-current" />
-          </button>
-          <button
+            {isPlaying ? <PauseIcon fontSize="small" /> : <PlayArrowIcon fontSize="small" />}
+          </IconButton>
+          <IconButton onClick={playNext} sx={{ color: '#a1a1aa', '&:hover': { color: 'white' } }} size="small">
+            <SkipNextIcon fontSize="small" />
+          </IconButton>
+          <IconButton
             onClick={() => setIsRepeat(!isRepeat)}
-            className={`transition ${isRepeat ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}
+            sx={{ color: isRepeat ? '#1DB954' : '#a1a1aa', '&:hover': { color: 'white' } }}
+            size="small"
           >
-            <Repeat className="w-4 h-4" />
-          </button>
-        </div>
+            <RepeatIcon fontSize="small" />
+          </IconButton>
+        </Box>
 
-        <div className="w-full flex items-center gap-2 text-xs text-zinc-400">
-          <span>{formatTime(currentTime)}</span>
-          <input
-            type="range"
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+          <Typography variant="caption" sx={{ color: '#a1a1aa', minWidth: 35, textAlign: 'right', fontSize: '0.75rem' }}>
+            {formatTime(currentTime)}
+          </Typography>
+          <Slider
             min={0}
-            max={duration || 0}
+            max={duration || 100}
             value={currentTime}
             onChange={handleSeek}
-            className="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-green-500 hover:accent-green-400"
+            size="small"
+            sx={{
+              color: 'white',
+              height: 4,
+              '& .MuiSlider-thumb': { width: 10, height: 10, display: 'none', '&:hover': { display: 'block' } },
+              '&:hover .MuiSlider-thumb': { display: 'block' },
+              '& .MuiSlider-track': { border: 'none', bgcolor: '#1DB954' },
+              '& .MuiSlider-rail': { bgcolor: '#27272a' }
+            }}
           />
-          <span>{formatTime(duration)}</span>
-        </div>
-      </div>
+          <Typography variant="caption" sx={{ color: '#a1a1aa', minWidth: 35, fontSize: '0.75rem' }}>
+            {formatTime(duration)}
+          </Typography>
+        </Box>
+      </Box>
 
-      {/* Desktop Volume Control */}
-      <div className="hidden md:flex items-center justify-end gap-2 w-1/4 min-w-[180px]">
-        <button onClick={toggleMute} className="text-zinc-400 hover:text-white transition">
-          {isMuted || volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-        </button>
-        <input
-          type="range"
+      <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'flex-end', gap: 1.5, width: '25%' }}>
+        <IconButton onClick={toggleMute} sx={{ color: '#a1a1aa', '&:hover': { color: 'white' } }} size="small">
+          {isMuted || volume === 0 ? <VolumeOffIcon fontSize="small" /> : <VolumeUpIcon fontSize="small" />}
+        </IconButton>
+        <Slider
           min={0}
           max={1}
           step={0.01}
           value={isMuted ? 0 : volume}
           onChange={handleVolumeChange}
-          className="w-24 h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-green-500 hover:accent-green-400"
+          size="small"
+          sx={{
+            width: 110,
+            color: 'white',
+            height: 4,
+            '& .MuiSlider-thumb': { width: 10, height: 10, display: 'none', '&:hover': { display: 'block' } },
+            '&:hover .MuiSlider-thumb': { display: 'block' },
+            '& .MuiSlider-track': { border: 'none', bgcolor: '#1DB954' },
+            '& .MuiSlider-rail': { bgcolor: '#27272a' }
+          }}
         />
-      </div>
+      </Box>
 
-      {/* Mobile Play Button */}
-      <div className="flex items-center gap-3 md:hidden">
-        <button
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 1 }}>
+        <IconButton
           onClick={togglePlay}
-          className="w-9 h-9 rounded-full bg-white text-black flex items-center justify-center transition shrink-0"
+          sx={{ bgcolor: 'white', color: 'black', width: 36, height: 36, '&:hover': { bgcolor: '#f4f4f5' } }}
         >
-          {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
-        </button>
-        <button 
-          onClick={() => setShowMobilePlayer && setShowMobilePlayer(true)}
-          className="text-zinc-400 p-1"
-        >
-          <Maximize2 className="w-4 h-4" />
-        </button>
-      </div>
-    </footer>
+          <PlayArrowIcon fontSize="small" />
+        </IconButton>
+        <IconButton onClick={() => setShowMobilePlayer && setShowMobilePlayer(true)} sx={{ color: '#a1a1aa' }} size="small">
+          <FullscreenIcon fontSize="small" />
+        </IconButton>
+      </Box>
+    </Box>
   );
 }

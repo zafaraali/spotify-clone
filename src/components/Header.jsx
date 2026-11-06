@@ -1,5 +1,9 @@
 import React from 'react';
-import { Search as SearchIcon, User, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Box, IconButton, InputBase, Button } from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import SearchIcon from '@mui/icons-material/Search';
+import PersonIcon from '@mui/icons-material/Person';
 
 export default function Header({
   currentView,
@@ -13,57 +17,113 @@ export default function Header({
   setShowProfileModal
 }) {
   return (
-    <header className="h-20 bg-zinc-900/80 backdrop-blur-md sticky top-0 z-10 flex items-center justify-between px-6 py-4 md:px-10 border-b border-zinc-800/50">
-      <div className="flex items-center gap-6 flex-1 max-w-md">
-        <div className="hidden sm:flex items-center gap-3 text-zinc-400">
-          <button
+    <Box
+      component="header"
+      sx={{
+        py: 2.5,
+        px: { xs: 3, md: 5 },
+        bgcolor: 'rgba(24, 24, 27, 0.9)',
+        backdropFilter: 'blur(16px)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottom: '1px solid rgba(39, 39, 42, 0.6)',
+        gap: 3
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, flex: 1, maxWidth: 450 }}>
+        <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
+          <IconButton
             onClick={goBack}
             disabled={!canGoBack}
-            className={`p-1.5 rounded-full bg-black/40 transition ${
-              canGoBack ? 'hover:bg-black/80 text-white cursor-pointer' : 'opacity-40 cursor-not-allowed'
-            }`}
+            sx={{
+              bgcolor: 'rgba(0, 0, 0, 0.5)',
+              color: 'white',
+              p: 1,
+              '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.8)' },
+              '&.Mui-disabled': { opacity: 0.3, color: 'white' }
+            }}
+            size="small"
           >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button
+            <ChevronLeftIcon />
+          </IconButton>
+          <IconButton
             onClick={goForward}
             disabled={!canGoForward}
-            className={`p-1.5 rounded-full bg-black/40 transition ${
-              canGoForward ? 'hover:bg-black/80 text-white cursor-pointer' : 'opacity-40 cursor-not-allowed'
-            }`}
+            sx={{
+              bgcolor: 'rgba(0, 0, 0, 0.5)',
+              color: 'white',
+              p: 1,
+              '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.8)' },
+              '&.Mui-disabled': { opacity: 0.3, color: 'white' }
+            }}
+            size="small"
           >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
+            <ChevronRightIcon />
+          </IconButton>
+        </Box>
 
         {currentView === 'search' && (
-          <div className="relative w-full">
-            <SearchIcon className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
-            <input
-              type="text"
+          <Box
+            sx={{
+              position: 'relative',
+              width: '100%',
+              bgcolor: '#27272a',
+              borderRadius: '9999px',
+              display: 'flex',
+              alignItems: 'center',
+              px: 2,
+              py: 0.75,
+              border: '1px solid transparent',
+              '&:focus-within': { borderColor: 'white' }
+            }}
+          >
+            <SearchIcon sx={{ color: '#a1a1aa', fontSize: 20, mr: 1.5 }} />
+            <InputBase
               placeholder="What do you want to listen to?"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-zinc-800 text-white text-sm pl-10 pr-4 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-white/20 placeholder-zinc-400"
+              sx={{ color: 'white', fontSize: '0.875rem', width: '100%' }}
             />
-          </div>
+          </Box>
         )}
-      </div>
+      </Box>
 
-      <div className="flex items-center gap-4">
-        <button
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
+        <Button
           onClick={() => setShowPremiumModal(true)}
-          className="hidden sm:block bg-white text-black text-sm font-bold px-5 py-2 rounded-full hover:scale-105 transition"
+          variant="contained"
+          sx={{
+            display: { xs: 'none', sm: 'inline-flex' },
+            bgcolor: 'white',
+            color: 'black',
+            fontWeight: 700,
+            fontSize: '0.85rem',
+            px: 3.5,
+            py: 1,
+            borderRadius: '9999px',
+            textTransform: 'none',
+            '&:hover': { bgcolor: '#f4f4f5', transform: 'scale(1.04)' },
+            transition: 'transform 0.2s'
+          }}
         >
           Explore Premium
-        </button>
-        <button
+        </Button>
+        <IconButton
           onClick={() => setShowProfileModal(true)}
-          className="p-2 rounded-full bg-black/60 hover:bg-zinc-800 transition text-zinc-200"
+          sx={{
+            bgcolor: 'rgba(0, 0, 0, 0.6)',
+            color: '#e4e4e7',
+            p: 1,
+            '&:hover': { bgcolor: '#27272a' }
+          }}
         >
-          <User className="w-5 h-5" />
-        </button>
-      </div>
-    </header>
+          <PersonIcon fontSize="small" />
+        </IconButton>
+      </Box>
+    </Box>
   );
 }

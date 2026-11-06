@@ -1,5 +1,8 @@
 import React from 'react';
-import { Play, Pause, Heart } from 'lucide-react';
+import { Box, Typography, IconButton, Avatar } from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 export default function TrackRow({
   track,
@@ -14,42 +17,61 @@ export default function TrackRow({
   const isCurrent = currentTrack?.id === track.id;
 
   return (
-    <div
+    <Box
       onClick={() => onPlay(track)}
-      className={`group flex items-center justify-between px-3 md:px-4 py-2.5 rounded-md hover:bg-zinc-800/60 cursor-pointer transition ${
-        isCurrent ? 'bg-zinc-800/40 text-green-500' : 'text-zinc-300'
-      }`}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        px: { xs: 2, md: 3 },
+        py: 1,
+        borderRadius: 1,
+        cursor: 'pointer',
+        bgcolor: isCurrent ? 'rgba(39, 39, 42, 0.4)' : 'transparent',
+        color: isCurrent ? '#1DB954' : '#d4d4d8',
+        '&:hover': { bgcolor: 'rgba(39, 39, 42, 0.6)' },
+        transition: 'background-color 0.2s'
+      }}
     >
-      <div className="flex items-center gap-3 md:gap-4 truncate">
-        <span className="w-4 text-sm text-zinc-500 group-hover:hidden shrink-0">
-          {index + 1}
-        </span>
-        <button className="w-4 hidden group-hover:block text-white shrink-0">
-          {isCurrent && isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
-        </button>
-        <img src={track.cover} alt={track.title} className="w-10 h-10 rounded object-cover shrink-0" />
-        <div className="truncate">
-          <p className={`font-semibold text-sm truncate ${isCurrent ? 'text-green-500' : 'text-white'}`}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, minWidth: 0, flex: 1 }}>
+        <Box sx={{ width: 24, textAlign: 'center', flexShrink: 0 }}>
+          <Typography variant="body2" sx={{ color: '#71717a', fontSize: '0.875rem' }}>
+            {index + 1}
+          </Typography>
+        </Box>
+        <Avatar src={track.cover} variant="rounded" sx={{ width: 40, height: 40, flexShrink: 0 }} />
+        <Box sx={{ minWidth: 0, overflow: 'hidden' }}>
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: 600, fontSize: '0.875rem', color: isCurrent ? '#1DB954' : 'white', truncate: 'true' }}
+          >
             {track.title}
-          </p>
-          <p className="text-xs text-zinc-400 truncate">{track.artist}</p>
-        </div>
-      </div>
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#a1a1aa', fontSize: '0.75rem', truncate: 'true', display: 'block' }}>
+            {track.artist}
+          </Typography>
+        </Box>
+      </Box>
 
-      <div className="hidden md:block text-sm text-zinc-400 truncate max-w-[200px]">{track.album}</div>
+      <Box sx={{ display: { xs: 'none', md: 'block' }, color: '#a1a1aa', fontSize: '0.85rem', px: 2, truncate: 'true', maxWidth: 180 }}>
+        {track.album}
+      </Box>
 
-      <div className="flex items-center gap-3 md:gap-4 shrink-0">
-        <button
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5, flexShrink: 0 }}>
+        <IconButton
           onClick={(e) => {
             e.stopPropagation();
             toggleLike(track.id);
           }}
-          className="text-zinc-400 hover:text-white opacity-100 md:opacity-0 group-hover:opacity-100 transition"
+          size="small"
+          sx={{ color: isLiked(track.id) ? '#1DB954' : '#a1a1aa', '&:hover': { color: 'white' } }}
         >
-          <Heart className={`w-4 h-4 ${isLiked(track.id) ? 'fill-green-500 text-green-500' : ''}`} />
-        </button>
-        <span className="text-xs text-zinc-400">{formatTime(track.duration)}</span>
-      </div>
-    </div>
+          <FavoriteIcon fontSize="small" />
+        </IconButton>
+        <Typography variant="caption" sx={{ color: '#a1a1aa', fontSize: '0.8rem', minWidth: 35, textAlign: 'right' }}>
+          {formatTime(track.duration)}
+        </Typography>
+      </Box>
+    </Box>
   );
 }

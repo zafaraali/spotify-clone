@@ -1,32 +1,52 @@
 import React from 'react';
-import { Home, Search, Library, Heart } from 'lucide-react';
+import { Box, BottomNavigation, BottomNavigationAction } from '@mui/material';
+import HomeIcon from '@mui/icons-material/Home';
+import SearchIcon from '@mui/icons-material/Search';
+import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 export default function MobileNav({ currentView, setCurrentView }) {
-  const items = [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'search', label: 'Search', icon: Search },
-    { id: 'library', label: 'Library', icon: Library },
-    { id: 'liked', label: 'Liked', icon: Heart },
-  ];
+  const getViewValue = (view) => {
+    switch (view) {
+      case 'home': return 0;
+      case 'search': return 1;
+      case 'library': return 2;
+      case 'liked': return 3;
+      default: return 0;
+    }
+  };
+
+  const handleChange = (event, newValue) => {
+    switch (newValue) {
+      case 0: setCurrentView('home'); break;
+      case 1: setCurrentView('search'); break;
+      case 2: setCurrentView('library'); break;
+      case 3: setCurrentView('liked'); break;
+      default: setCurrentView('home');
+    }
+  };
 
   return (
-    <div className="md:hidden bg-zinc-950 border-t border-zinc-900 flex justify-around items-center h-16 text-xs text-zinc-400 z-10">
-      {items.map((item) => {
-        const Icon = item.icon;
-        const active = currentView === item.id;
-        return (
-          <button
-            key={item.id}
-            onClick={() => setCurrentView(item.id)}
-            className={`flex flex-col items-center gap-1 transition ${
-              active ? 'text-white' : 'hover:text-zinc-200'
-            }`}
-          >
-            <Icon className={`w-5 h-5 ${active ? 'text-green-500' : ''}`} />
-            <span className={active ? 'font-semibold text-white' : ''}>{item.label}</span>
-          </button>
-        );
-      })}
-    </div>
+    <Box sx={{ display: { xs: 'block', md: 'none' }, position: 'sticky', bottom: 0, zIndex: 10 }}>
+      <BottomNavigation
+        value={getViewValue(currentView)}
+        onChange={handleChange}
+        sx={{
+          bgcolor: '#09090b',
+          borderTop: '1px solid #18181b',
+          height: 60,
+          '& .MuiBottomNavigationAction-root': {
+            color: '#a1a1aa',
+            fontSize: '0.75rem',
+            '&.Mui-selected': { color: '#1DB954' }
+          }
+        }}
+      >
+        <BottomNavigationAction label="Home" icon={<HomeIcon sx={{ fontSize: 20 }} />} />
+        <BottomNavigationAction label="Search" icon={<SearchIcon sx={{ fontSize: 20 }} />} />
+        <BottomNavigationAction label="Library" icon={<LibraryMusicIcon sx={{ fontSize: 20 }} />} />
+        <BottomNavigationAction label="Liked" icon={<FavoriteIcon sx={{ fontSize: 20 }} />} />
+      </BottomNavigation>
+    </Box>
   );
 }

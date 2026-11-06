@@ -112,12 +112,12 @@ export const SAMPLE_SONGS = [
 ];
 
 export const CATEGORIES = [
-  { id: "pop", name: "Pop", color: "bg-pink-600" },
-  { id: "hiphop", name: "Hip-Hop", color: "bg-amber-600" },
-  { id: "rock", name: "Rock", color: "bg-red-600" },
-  { id: "dance", name: "Dance / Electronic", color: "bg-teal-600" },
-  { id: "chill", name: "Chill", color: "bg-blue-600" },
-  { id: "indie", name: "Indie", color: "bg-purple-600" },
-  { id: "workout", name: "Workout", color: "bg-lime-600" },
-  { id: "focus", name: "Focus", color: "bg-emerald-600" }
+  { id: "pop", name: "Pop", color: "#db2777" },
+  { id: "hiphop", name: "Hip-Hop", color: "#d97706" },
+  { id: "rock", name: "Rock", color: "#dc2626" },
+  { id: "dance", name: "Dance / Electronic", color: "#0d9488" },
+  { id: "chill", name: "Chill", color: "#2563eb" },
+  { id: "indie", name: "Indie", color: "#9333ea" },
+  { id: "workout", name: "Workout", color: "#65a30d" },
+  { id: "focus", name: "Focus", color: "#059669" }
 ];
