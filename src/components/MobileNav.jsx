@@ -4,6 +4,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 
 export default function MobileNav({ currentView, setCurrentView }) {
   const getViewValue = (view) => {
@@ -12,6 +13,7 @@ export default function MobileNav({ currentView, setCurrentView }) {
       case 'search': return 1;
       case 'library': return 2;
       case 'liked': return 3;
+      case 'local': return 4;
       default: return 0;
     }
   };
@@ -22,6 +24,7 @@ export default function MobileNav({ currentView, setCurrentView }) {
       case 1: setCurrentView('search'); break;
       case 2: setCurrentView('library'); break;
       case 3: setCurrentView('liked'); break;
+      case 4: setCurrentView('local'); break;
       default: setCurrentView('home');
     }
   };
@@ -38,6 +41,8 @@ export default function MobileNav({ currentView, setCurrentView }) {
           '& .MuiBottomNavigationAction-root': {
             color: '#a1a1aa',
             fontSize: '0.75rem',
+            minWidth: 'auto',
+            px: 1,
             '&.Mui-selected': { color: '#1DB954' }
           }
         }}
@@ -46,6 +51,7 @@ export default function MobileNav({ currentView, setCurrentView }) {
         <BottomNavigationAction label="Search" icon={<SearchIcon sx={{ fontSize: 20 }} />} />
         <BottomNavigationAction label="Library" icon={<LibraryMusicIcon sx={{ fontSize: 20 }} />} />
         <BottomNavigationAction label="Liked" icon={<FavoriteIcon sx={{ fontSize: 20 }} />} />
+        <BottomNavigationAction label="Local" icon={<AudiotrackIcon sx={{ fontSize: 20 }} />} />
       </BottomNavigation>
     </Box>
   );

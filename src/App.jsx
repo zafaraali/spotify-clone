@@ -20,7 +20,8 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const [songs] = useState(SAMPLE_SONGS);
+  const [songs, setSongs] = useState(SAMPLE_SONGS);
+  const [localSongs, setLocalSongs] = useState([]);
   const [currentTrack, setCurrentTrack] = useState(SAMPLE_SONGS[0]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -57,6 +58,33 @@ export default function App() {
     if (historyIndex < navHistory.length - 1) {
       setHistoryIndex(historyIndex + 1);
       setCurrentView(navHistory[historyIndex + 1]);
+    }
+  };
+
+  const handleAddLocalSongs = (fileList) => {
+    const newLocalTracks = Array.from(fileList).map((file, idx) => {
+      const objectUrl = URL.createObjectURL(file);
+      const titleWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+      return {
+        id: `local-${Date.now()}-${idx}`,
+        title: titleWithoutExt,
+        artist: "Local File",
+        album: "Local Uploads",
+        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=300&q=80",
+        url: objectUrl,
+        duration: 200,
+        genre: "Local",
+        plays: "1"
+      };
+    });
+
+    setLocalSongs((prev) => [...prev, ...newLocalTracks]);
+    setSongs((prev) => [...newLocalTracks, ...prev]);
+
+    // If nothing was playing or if user wants to play first uploaded song
+    if (!currentTrack && newLocalTracks.length > 0) {
+      setCurrentTrack(newLocalTracks[0]);
+      setIsPlaying(true);
     }
   };
 
@@ -165,6 +193,7 @@ export default function App() {
           currentView={currentView}
           setCurrentView={handleSetCurrentView}
           likedSongsCount={likedSongIds.size}
+          localSongsCount={localSongs.length}
         />
 
         <Box component="main" sx={{ flex: 1, background: 'linear-gradient(180deg, rgba(39,39,42,0.8) 0%, rgba(9,9,11,1) 100%)', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
@@ -178,6 +207,7 @@ export default function App() {
             goForward={goForward}
             setShowPremiumModal={setShowPremiumModal}
             setShowProfileModal={setShowProfileModal}
+            onAddLocalSongs={handleAddLocalSongs}
           />
 
           <Box sx={{ p: { xs: 3, md: 5 }, flex: 1, pb: { xs: 12, md: 5 } }}>
@@ -219,6 +249,18 @@ export default function App() {
               <LibraryView
                 title="Liked Songs"
                 songs={songs.filter((s) => likedSongIds.has(s.id))}
+                currentTrack={currentTrack}
+                isPlaying={isPlaying}
+                onPlayTrack={handlePlayTrack}
+                isLiked={isLiked}
+                toggleLike={toggleLike}
+                formatTime={formatTime}
+              />
+            )}
+            {currentView === 'local' && (
+              <LibraryView
+                title="Local Music"
+                songs={localSongs}
                 currentTrack={currentTrack}
                 isPlaying={isPlaying}
                 onPlayTrack={handlePlayTrack}
@@ -322,7 +364,7 @@ export default function App() {
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant="body2" sx={{ color: '#a1a1aa' }}>Audio Quality</Typography>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>High (320kbps)</Typography>
+              <Typography variant="body2" sx={{ fontWeight: '600' }}>High (320kbps)</Typography>
             </Box>
           </Box>
           <Button

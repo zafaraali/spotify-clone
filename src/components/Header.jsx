@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Box, IconButton, InputBase, Button } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SearchIcon from '@mui/icons-material/Search';
 import PersonIcon from '@mui/icons-material/Person';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 export default function Header({
   currentView,
@@ -14,8 +15,20 @@ export default function Header({
   goBack,
   goForward,
   setShowPremiumModal,
-  setShowProfileModal
+  setShowProfileModal,
+  onAddLocalSongs
 }) {
+  const fileInputRef = useRef(null);
+
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      onAddLocalSongs(files);
+    }
+    // Reset input
+    e.target.value = '';
+  };
+
   return (
     <Box
       component="header"
@@ -93,6 +106,33 @@ export default function Header({
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          multiple
+          accept="audio/*"
+          style={{ display: 'none' }}
+        />
+        <Button
+          onClick={() => fileInputRef.current?.click()}
+          variant="outlined"
+          startIcon={<UploadFileIcon />}
+          sx={{
+            color: 'white',
+            borderColor: 'rgba(255,255,255,0.2)',
+            fontWeight: 600,
+            fontSize: '0.85rem',
+            px: 2.5,
+            py: 1,
+            borderRadius: '9999px',
+            textTransform: 'none',
+            '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.05)' },
+          }}
+        >
+          Add Local Songs
+        </Button>
+
         <Button
           onClick={() => setShowPremiumModal(true)}
           variant="contained"

@@ -35,7 +35,7 @@ export default function LibraryView({
         </Box>
       ) : (
         <Typography variant="body2" sx={{ color: '#a1a1aa', fontSize: '0.875rem' }}>
-          No songs to display.
+          No songs to display. Upload local audio files using the "Add Local Songs" button in the top navigation bar.
         </Typography>
       )}
     </Box>

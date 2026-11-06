@@ -43,7 +43,6 @@ export default function Player({
         bgcolor: '#09090b',
         borderTop: '1px solid #18181b',
         px: { xs: 2.5, md: 3.5 },
-        pt: 1.5,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',

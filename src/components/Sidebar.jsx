@@ -4,8 +4,9 @@ import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 
-export default function Sidebar({ currentView, setCurrentView, likedSongsCount }) {
+export default function Sidebar({ currentView, setCurrentView, likedSongsCount, localSongsCount }) {
   const navItems = [
     { id: 'home', label: 'Home', icon: <HomeIcon /> },
     { id: 'search', label: 'Search', icon: <SearchIcon /> },
@@ -89,7 +90,7 @@ export default function Sidebar({ currentView, setCurrentView, likedSongsCount }
 
         <Divider sx={{ borderColor: '#27272a', my: 1 }} />
 
-        <List component="nav" sx={{ p: 0 }}>
+        <List component="nav" sx={{ p: 0, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           <ListItemButton
             onClick={() => setCurrentView('liked')}
             sx={{
@@ -126,6 +127,34 @@ export default function Sidebar({ currentView, setCurrentView, likedSongsCount }
             {likedSongsCount > 0 && (
               <Typography variant="body2" sx={{ color: '#71717a', fontSize: '0.8rem', fontWeight: 500 }}>
                 {likedSongsCount}
+              </Typography>
+            )}
+          </ListItemButton>
+
+          <ListItemButton
+            onClick={() => setCurrentView('local')}
+            sx={{
+              borderRadius: 1,
+              py: 1.2,
+              px: 1.5,
+              bgcolor: currentView === 'local' ? '#27272a' : 'transparent',
+              color: currentView === 'local' ? 'white' : '#a1a1aa',
+              '&:hover': {
+                bgcolor: currentView === 'local' ? '#27272a' : '#18181b',
+                color: 'white',
+              }
+            }}
+          >
+            <ListItemIcon sx={{ color: currentView === 'local' ? '#1DB954' : '#a1a1aa', minWidth: 38 }}>
+              <AudiotrackIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText
+              primary="Local Music"
+              primaryTypographyProps={{ fontSize: '0.875rem', fontWeight: 600 }}
+            />
+            {localSongsCount > 0 && (
+              <Typography variant="body2" sx={{ color: '#71717a', fontSize: '0.8rem', fontWeight: 500 }}>
+                {localSongsCount}
               </Typography>
             )}
           </ListItemButton>
