@@ -25,7 +25,6 @@ export default function Header({
     if (files && files.length > 0) {
       onAddLocalSongs(files);
     }
-    // Reset input
     e.target.value = '';
   };
 

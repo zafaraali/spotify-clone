@@ -11,6 +11,7 @@ import HomeView from './views/HomeView';
 import SearchView from './views/SearchView';
 import LibraryView from './views/LibraryView';
 import { SAMPLE_SONGS, CATEGORIES } from './data/mockData';
+import { getAllLocalSongsFromDB, saveLocalSongToDB } from './db';
 
 export default function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -20,15 +21,23 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const [songs, setSongs] = useState(SAMPLE_SONGS);
   const [localSongs, setLocalSongs] = useState([]);
+  const [songs, setSongs] = useState(SAMPLE_SONGS);
   const [currentTrack, setCurrentTrack] = useState(SAMPLE_SONGS[0]);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.8);
   const [isMuted, setIsMuted] = useState(false);
-  const [likedSongIds, setLikedSongIds] = useState(new Set(['1', '3', '6']));
+  const [likedSongIds, setLikedSongIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem('soundpulse_liked_songs');
+      return saved ? new Set(JSON.parse(saved)) : new Set(['1', '3', '6']);
+    } catch {
+      return new Set(['1', '3', '6']);
+    }
+  });
   const [isShuffle, setIsShuffle] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   const [showMobilePlayer, setShowMobilePlayer] = useState(false);
@@ -37,6 +46,31 @@ export default function App() {
   const [showProfileModal, setShowProfileModal] = useState(false);
 
   const audioRef = useRef(new Audio());
+
+  useEffect(() => {
+    getAllLocalSongsFromDB().then((savedSongs) => {
+      if (savedSongs && savedSongs.length > 0) {
+        const hydratedSongs = savedSongs.map((song) => {
+          if (song.blob && !song.url.startsWith('blob:')) {
+            const blobUrl = URL.createObjectURL(song.blob);
+            return { ...song, url: blobUrl };
+          }
+          return song;
+        });
+        setLocalSongs(hydratedSongs);
+        setSongs([...hydratedSongs, ...SAMPLE_SONGS]);
+        setCurrentTrack(hydratedSongs[0]);
+      }
+    }).catch((err) => console.log('Error loading from IndexedDB:', err));
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('soundpulse_liked_songs', JSON.stringify(Array.from(likedSongIds)));
+    } catch (e) {
+      console.log('Error saving liked songs:', e);
+    }
+  }, [likedSongIds]);
 
   const handleSetCurrentView = (view) => {
     if (view === currentView) return;
@@ -62,30 +96,32 @@ export default function App() {
   };
 
   const handleAddLocalSongs = (fileList) => {
-    const newLocalTracks = Array.from(fileList).map((file, idx) => {
-      const objectUrl = URL.createObjectURL(file);
+    Array.from(fileList).forEach((file, idx) => {
+      const blobUrl = URL.createObjectURL(file);
       const titleWithoutExt = file.name.replace(/\.[^/.]+$/, "");
-      return {
-        id: `local-${Date.now()}-${idx}`,
+      const newTrack = {
+        id: `local-${Date.now()}-${idx}-${Math.random().toString(36).substring(2, 6)}`,
         title: titleWithoutExt,
         artist: "Local File",
         album: "Local Uploads",
         cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=300&q=80",
-        url: objectUrl,
+        url: blobUrl,
+        blob: file,
         duration: 200,
         genre: "Local",
         plays: "1"
       };
+
+      saveLocalSongToDB(newTrack).catch((err) => console.log('Failed to save to IndexedDB:', err));
+
+      setLocalSongs((prev) => [newTrack, ...prev]);
+      setSongs((prev) => [newTrack, ...prev]);
+
+      if (!currentTrack || currentTrack.id === SAMPLE_SONGS[0].id) {
+        setCurrentTrack(newTrack);
+        setIsPlaying(true);
+      }
     });
-
-    setLocalSongs((prev) => [...prev, ...newLocalTracks]);
-    setSongs((prev) => [...newLocalTracks, ...prev]);
-
-    // If nothing was playing or if user wants to play first uploaded song
-    if (!currentTrack && newLocalTracks.length > 0) {
-      setCurrentTrack(newLocalTracks[0]);
-      setIsPlaying(true);
-    }
   };
 
   useEffect(() => {
@@ -364,7 +400,7 @@ export default function App() {
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant="body2" sx={{ color: '#a1a1aa' }}>Audio Quality</Typography>
-              <Typography variant="body2" sx={{ fontWeight: '600' }}>High (320kbps)</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>High (320kbps)</Typography>
             </Box>
           </Box>
           <Button
