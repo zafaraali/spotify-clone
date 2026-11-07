@@ -4,6 +4,7 @@ import TrackRow from '../components/TrackRow';
 
 export default function SearchView({
   searchQuery,
+  setSearchQuery,
   selectedCategory,
   setSelectedCategory,
   songs,
@@ -20,6 +21,7 @@ export default function SearchView({
       return (
         s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         s.artist.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.album.toLowerCase().includes(searchQuery.toLowerCase()) ||
         s.genre.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
@@ -37,12 +39,15 @@ export default function SearchView({
             <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.2rem' }}>
               {searchQuery ? `Results for "${searchQuery}"` : `${selectedCategory.name} Tracks`}
             </Typography>
-            {selectedCategory && (
-              <Button onClick={() => setSelectedCategory(null)} size="small" sx={{ color: '#a1a1aa', fontSize: '0.8rem', textTransform: 'none', '&:hover': { color: 'white' } }}>
-                Clear Filter
+            {(selectedCategory || searchQuery) && (
+              <Button onClick={() => { setSelectedCategory(null); setSearchQuery(''); }} size="small" sx={{ color: '#a1a1aa', fontSize: '0.8rem', textTransform: 'none', '&:hover': { color: 'white' } }}>
+                Clear
               </Button>
             )}
           </Box>
+          <Typography variant="caption" sx={{ color: '#71717a', display: 'block', mb: 2 }}>
+            {filteredSongs.length} {filteredSongs.length === 1 ? 'result' : 'results'}
+          </Typography>
           {filteredSongs.length > 0 ? (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
               {filteredSongs.map((track, i) => (

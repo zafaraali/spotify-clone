@@ -1,8 +1,9 @@
 import React from 'react';
 import { Box, Typography, CardMedia, IconButton } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { DEFAULT_COVER } from '../data/mockData';
 
-export default function HomeView({ songs, currentTrack, isPlaying, onPlayTrack }) {
+export default function HomeView({ songs, recentTracks = [], currentTrack, isPlaying, onPlayTrack }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <Box>
@@ -31,6 +32,7 @@ export default function HomeView({ songs, currentTrack, isPlaying, onPlayTrack }
                 {song.title}
               </Typography>
               <IconButton
+                aria-label={`Play ${song.title}`}
                 className="play-btn"
                 sx={{
                   bgcolor: '#1DB954',
@@ -51,6 +53,20 @@ export default function HomeView({ songs, currentTrack, isPlaying, onPlayTrack }
         </Box>
       </Box>
 
+      {recentTracks.length > 0 && (
+        <Box>
+          <Typography variant="h6" sx={{ fontWeight: 700, mb: 2.5, fontSize: '1.2rem' }}>Recently Played</Typography>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)', md: 'repeat(6, 1fr)' }, gap: 2 }}>
+            {recentTracks.slice(0, 6).map((song) => (
+              <Box key={song.id} onClick={() => onPlayTrack(song)} sx={{ cursor: 'pointer', minWidth: 0 }}>
+                <CardMedia component="img" image={song.cover || DEFAULT_COVER} onError={(event) => { event.currentTarget.src = DEFAULT_COVER; }} alt={song.title} sx={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 1.5, mb: 1 }} />
+                <Typography variant="body2" sx={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{song.title}</Typography>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      )}
+
       <Box>
         <Typography variant="h6" sx={{ fontWeight: 700, mb: 2.5, fontSize: '1.2rem' }}>
           Made For You
@@ -70,8 +86,9 @@ export default function HomeView({ songs, currentTrack, isPlaying, onPlayTrack }
               }}
             >
               <Box sx={{ position: 'relative', mb: 2 }}>
-                <CardMedia component="img" image={song.cover} alt={song.title} sx={{ width: '100%', aspectRatio: '1/1', borderRadius: 1.5, objectFit: 'cover' }} />
+              <CardMedia component="img" image={song.cover || DEFAULT_COVER} onError={(event) => { event.currentTarget.src = DEFAULT_COVER; }} alt={song.title} sx={{ width: '100%', aspectRatio: '1/1', borderRadius: 1.5, objectFit: 'cover' }} />
                 <IconButton
+                  aria-label={`Play ${song.title}`}
                   className="play-btn-card"
                   sx={{
                     position: 'absolute',
@@ -91,10 +108,10 @@ export default function HomeView({ songs, currentTrack, isPlaying, onPlayTrack }
                   <PlayArrowIcon />
                 </IconButton>
               </Box>
-              <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.875rem', truncate: 'true' }}>
+              <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {song.title}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#a1a1aa', fontSize: '0.75rem', display: 'block', truncate: 'true', mt: 0.5 }}>
+              <Typography variant="caption" sx={{ color: '#a1a1aa', fontSize: '0.75rem', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', mt: 0.5 }}>
                 {song.artist}
               </Typography>
             </Box>

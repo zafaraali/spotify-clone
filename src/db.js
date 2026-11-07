@@ -37,3 +37,13 @@ export const getAllLocalSongsFromDB = async () => {
     request.onerror = () => reject(request.error);
   });
 };
+
+export const deleteLocalSongFromDB = async (songId) => {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORE_NAME, 'readwrite');
+    const request = transaction.objectStore(STORE_NAME).delete(songId);
+    request.onsuccess = () => resolve(true);
+    request.onerror = () => reject(request.error);
+  });
+};

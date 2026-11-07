@@ -49,6 +49,7 @@ export default function Header({
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, flex: 1, maxWidth: 450 }}>
         <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
           <IconButton
+            aria-label="Go back"
             onClick={goBack}
             disabled={!canGoBack}
             sx={{
@@ -63,6 +64,7 @@ export default function Header({
             <ChevronLeftIcon />
           </IconButton>
           <IconButton
+            aria-label="Go forward"
             onClick={goForward}
             disabled={!canGoForward}
             sx={{
@@ -114,10 +116,12 @@ export default function Header({
           style={{ display: 'none' }}
         />
         <Button
+          aria-label="Add local songs"
           onClick={() => fileInputRef.current?.click()}
           variant="outlined"
           startIcon={<UploadFileIcon />}
           sx={{
+            minWidth: { xs: 42, sm: 'auto' },
             color: 'white',
             borderColor: 'rgba(255,255,255,0.2)',
             fontWeight: 600,
@@ -129,7 +133,7 @@ export default function Header({
             '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.05)' },
           }}
         >
-          Add Local Songs
+          <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Add Local Songs</Box>
         </Button>
 
         <Button
@@ -152,6 +156,7 @@ export default function Header({
           Explore Premium
         </Button>
         <IconButton
+          aria-label="Open profile"
           onClick={() => setShowProfileModal(true)}
           sx={{
             bgcolor: 'rgba(0, 0, 0, 0.6)',

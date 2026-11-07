@@ -1,12 +1,14 @@
 import React from 'react';
-import { Box, Typography, List, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material';
+import { Box, Typography, List, ListItemButton, ListItemIcon, ListItemText, Divider, IconButton } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
+import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
+import AddIcon from '@mui/icons-material/Add';
 
-export default function Sidebar({ currentView, setCurrentView, likedSongsCount, localSongsCount }) {
+export default function Sidebar({ currentView, setCurrentView, likedSongsCount, localSongsCount, playlists = [], onCreatePlaylist }) {
   const navItems = [
     { id: 'home', label: 'Home', icon: <HomeIcon /> },
     { id: 'search', label: 'Search', icon: <SearchIcon /> },
@@ -159,6 +161,16 @@ export default function Sidebar({ currentView, setCurrentView, likedSongsCount, 
             )}
           </ListItemButton>
         </List>
+
+        <Box>
+          <ListItemButton onClick={() => setCurrentView('playlists')} sx={{ borderRadius: 1, py: 1.2, px: 1.5, bgcolor: currentView === 'playlists' ? '#27272a' : 'transparent', color: currentView === 'playlists' ? 'white' : '#a1a1aa', '&:hover': { bgcolor: '#18181b', color: 'white' } }}>
+            <ListItemIcon sx={{ minWidth: 38, color: currentView === 'playlists' ? '#1DB954' : 'inherit' }}><PlaylistPlayIcon fontSize="small" /></ListItemIcon>
+            <ListItemText primary="Playlists" primaryTypographyProps={{ fontSize: '0.875rem', fontWeight: 600 }} />
+            <IconButton aria-label="Create playlist" onClick={(event) => { event.stopPropagation(); onCreatePlaylist(); }} size="small" sx={{ color: '#a1a1aa', '&:hover': { color: 'white' } }}>
+              <AddIcon fontSize="small" />
+            </IconButton>
+          </ListItemButton>
+        </Box>
       </Box>
     </Box>
   );

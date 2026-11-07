@@ -6,10 +6,12 @@ import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
 import RepeatIcon from '@mui/icons-material/Repeat';
+import RepeatOneIcon from '@mui/icons-material/RepeatOne';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import { DEFAULT_COVER } from '../data/mockData';
 
 export default function Player({
   currentTrack,
@@ -26,8 +28,8 @@ export default function Player({
   toggleMute,
   isShuffle,
   setIsShuffle,
-  isRepeat,
-  setIsRepeat,
+  repeatMode,
+  setRepeatMode,
   isLiked,
   toggleLike,
   formatTime,
@@ -63,19 +65,21 @@ export default function Player({
         }}
       >
         <Avatar
-          src={currentTrack.cover}
+          src={currentTrack.cover || DEFAULT_COVER}
+          onError={(event) => { event.currentTarget.src = DEFAULT_COVER; }}
           variant="rounded"
           sx={{ width: 50, height: 50, boxShadow: 2, borderRadius: 1 }}
         />
         <Box sx={{ overflow: 'hidden' }}>
-          <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.875rem', truncate: 'true', '&:hover': { textDecoration: 'underline' } }}>
+          <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', '&:hover': { textDecoration: 'underline' } }}>
             {currentTrack.title}
           </Typography>
-          <Typography variant="caption" sx={{ color: '#a1a1aa', fontSize: '0.75rem', truncate: 'true', display: 'block', '&:hover': { textDecoration: 'underline' } }}>
+          <Typography variant="caption" sx={{ color: '#a1a1aa', fontSize: '0.75rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block', '&:hover': { textDecoration: 'underline' } }}>
             {currentTrack.artist}
           </Typography>
         </Box>
         <IconButton
+          aria-label={isLiked(currentTrack.id) ? 'Remove from liked songs' : 'Add to liked songs'}
           onClick={(e) => {
             e.stopPropagation();
             toggleLike(currentTrack.id);
@@ -88,18 +92,19 @@ export default function Player({
       </Box>
 
       <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column', alignItems: 'center', gap: 0.75, width: '45%', maxWidth: 580 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, pt: '10px' }}>
           <IconButton
+            aria-label={isShuffle ? 'Disable shuffle' : 'Enable shuffle'}
             onClick={() => setIsShuffle(!isShuffle)}
             sx={{ color: isShuffle ? '#1DB954' : '#a1a1aa', '&:hover': { color: 'white' } }}
             size="small"
           >
             <ShuffleIcon fontSize="small" />
           </IconButton>
-          <IconButton onClick={playPrev} sx={{ color: '#a1a1aa', '&:hover': { color: 'white' } }} size="small">
+          <IconButton aria-label="Previous track" onClick={playPrev} sx={{ color: '#a1a1aa', '&:hover': { color: 'white' } }} size="small">
             <SkipPreviousIcon fontSize="small" />
           </IconButton>
-          <IconButton
+          <IconButton aria-label={isPlaying ? 'Pause' : 'Play'}
             onClick={togglePlay}
             sx={{
               bgcolor: 'white',
@@ -111,15 +116,15 @@ export default function Player({
           >
             {isPlaying ? <PauseIcon fontSize="small" /> : <PlayArrowIcon fontSize="small" />}
           </IconButton>
-          <IconButton onClick={playNext} sx={{ color: '#a1a1aa', '&:hover': { color: 'white' } }} size="small">
+          <IconButton aria-label="Next track" onClick={playNext} sx={{ color: '#a1a1aa', '&:hover': { color: 'white' } }} size="small">
             <SkipNextIcon fontSize="small" />
           </IconButton>
-          <IconButton
-            onClick={() => setIsRepeat(!isRepeat)}
-            sx={{ color: isRepeat ? '#1DB954' : '#a1a1aa', '&:hover': { color: 'white' } }}
+          <IconButton aria-label={repeatMode === 0 ? 'Enable playlist repeat' : repeatMode === 1 ? 'Enable single track repeat' : 'Disable repeat'}
+            onClick={() => setRepeatMode((repeatMode + 1) % 3)}
+            sx={{ color: repeatMode > 0 ? '#1DB954' : '#a1a1aa', '&:hover': { color: 'white' } }}
             size="small"
           >
-            <RepeatIcon fontSize="small" />
+            {repeatMode === 2 ? <RepeatOneIcon fontSize="small" /> : <RepeatIcon fontSize="small" />}
           </IconButton>
         </Box>
 
@@ -149,7 +154,7 @@ export default function Player({
       </Box>
 
       <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'flex-end', gap: 1.5, width: '25%' }}>
-        <IconButton onClick={toggleMute} sx={{ color: '#a1a1aa', '&:hover': { color: 'white' } }} size="small">
+        <IconButton aria-label={isMuted || volume === 0 ? 'Unmute' : 'Mute'} onClick={toggleMute} sx={{ color: '#a1a1aa', '&:hover': { color: 'white' } }} size="small">
           {isMuted || volume === 0 ? <VolumeOffIcon fontSize="small" /> : <VolumeUpIcon fontSize="small" />}
         </IconButton>
         <Slider
@@ -171,14 +176,14 @@ export default function Player({
         />
       </Box>
 
-      <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 1 }}>
-        <IconButton
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 1, pt: '10px' }}>
+        <IconButton aria-label={isPlaying ? 'Pause' : 'Play'}
           onClick={togglePlay}
           sx={{ bgcolor: 'white', color: 'black', width: 36, height: 36, '&:hover': { bgcolor: '#f4f4f5' } }}
         >
           <PlayArrowIcon fontSize="small" />
         </IconButton>
-        <IconButton onClick={() => setShowMobilePlayer && setShowMobilePlayer(true)} sx={{ color: '#a1a1aa' }} size="small">
+        <IconButton aria-label="Open full player" onClick={() => setShowMobilePlayer && setShowMobilePlayer(true)} sx={{ color: '#a1a1aa' }} size="small">
           <FullscreenIcon fontSize="small" />
         </IconButton>
       </Box>

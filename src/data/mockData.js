@@ -1,3 +1,5 @@
+export const DEFAULT_COVER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%2318181b'/%3E%3Ccircle cx='150' cy='150' r='76' fill='%231DB954'/%3E%3Cpath d='M150 96v80a28 28 0 1 1-22-27V120h50V96h-28z' fill='%2309090b'/%3E%3C/svg%3E";
+
 export const SAMPLE_SONGS = [
   {
     id: "1",
